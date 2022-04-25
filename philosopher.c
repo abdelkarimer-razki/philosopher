@@ -31,12 +31,6 @@ int	ft_isntdigit(char *arv)
 	return (-1);
 }
 
-float	time_diff(struct timeval *start, struct timeval *end)
-{
-	return ((end->tv_sec - start->tv_sec)
-		+ 1e-6 * (end->tv_usec - start->tv_usec));
-}
-
 int	args_protection(int arc, char **arv)
 {
 	int	i;
@@ -76,11 +70,11 @@ void	*h(void *j)
 		gettimeofday(&start, NULL);
 		printf("%d %d is eating\n", start.tv_usec, c + 1);
 		usleep(philos[c].t_eat);
-		pthread_mutex_unlock(&philos[c].mutex);
 		if (c == philos[c].n_philos)
 			pthread_mutex_unlock(&philos[0].mutex);
 		else
 			pthread_mutex_unlock(&philos[c + 1].mutex);
+		pthread_mutex_unlock(&philos[c].mutex);
 		if (philos[c].n_forks == 2)
 		{
 			gettimeofday(&start, NULL);
