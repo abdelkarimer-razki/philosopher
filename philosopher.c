@@ -27,96 +27,122 @@ int	ft_isntdigit(char *arv)
 			return (1);
 	}
 	if (i == 0)
-	{
 		return (1);
-	}
+	return (-1);
+}
+
+float	time_diff(struct timeval *start, struct timeval *end)
+{
+	return ((end->tv_sec - start->tv_sec)
+		+ 1e-6 * (end->tv_usec - start->tv_usec));
 }
 
 int	args_protection(int arc, char **arv)
 {
 	int	i;
 
-	i = -1;
+	i = 0;
 	if (arc != 5 && arc != 6)
 		return (1);
-	while (++i)
-	{
-		if (ft_isntdigit(arv[i]))
+	while (arv[++i])
+		if (ft_isntdigit(arv[i]) == 1 || ft_atoi(arv[i]) < 0)
 			return (1);
-	}
 	return (-1);
-
 }
 
-int	ft_atoi(const char *str)
+void	*h(void *j)
 {
-	char		*c;
-	size_t		k;
-	size_t		m;
+	t_philo			*philos;
+	static int		i = -1;
+	int				c;
+	struct timeval	start;
+	struct timeval	end;
 
-	c = (char *)str;
-	m = 1;
-	k = 0;
-	while (*c == ' ' || *c == '\n'
-		|| *c == '\t' || *c == '\r'
-		|| *c == '\f' || *c == '\v' )
+	philos = (t_philo *)j;
+	i++;
+	c = i;
+	usleep(200 * (philos[c].n_philos - c + 1));
+	gettimeofday(&start, NULL);
+	while (1 && end.tv_usec - start.tv_usec < philos[c].t_die)
 	{
-		c++;
+		pthread_mutex_lock(&philos[c].mutex);
+		if (c == philos[c].n_philos)
+			pthread_mutex_lock(&philos[0].mutex);
+		else
+			pthread_mutex_lock(&philos[c + 1].mutex);
+		gettimeofday(&start, NULL);
+		printf("%d %d has taken a fork\n", start.tv_usec, c + 1);
+		philos[c].n_forks++;
+		gettimeofday(&start, NULL);
+		printf("%d %d is eating\n", start.tv_usec, c + 1);
+		usleep(philos[c].t_eat);
+		pthread_mutex_unlock(&philos[c].mutex);
+		if (c == philos[c].n_philos)
+			pthread_mutex_unlock(&philos[0].mutex);
+		else
+			pthread_mutex_unlock(&philos[c + 1].mutex);
+		if (philos[c].n_forks == 2)
+		{
+			gettimeofday(&start, NULL);
+			printf("%d %d is sleeping\n", start.tv_usec, c + 1);
+			philos[c].n_forks--;
+			usleep(philos[c].t_sleep);
+		}
+		printf("%d is thinking\n", c + 1);
+		gettimeofday(&end, NULL);
 	}
-	if (*c == '-' || *c == '+')
-	{
-		if (*c == '-')
-			m = m * -1;
-		c++;
-	}
-	while (*c >= '0' && *c <= '9')
-	{
-		k = (*c - 48) + k * 10;
-		c++;
-	}
-	return ((int)(k * m));
+	gettimeofday(&start, NULL);
+	printf("%d %d is dead\n", start.tv_usec, c + 1);
+	exit(1);
+	return (j);
 }
 
-int	create_p_t(pthread_t *threads, t_philo *philos, char **arv)
+void	create_th(t_philo *philos, int c)
+{
+	int	i;
+
+	i = -1;
+	while (++i < c)
+	{
+		pthread_mutex_init(&philos[i].mutex, NULL);
+		pthread_create(&philos[i].thread, NULL, &h, philos);
+		usleep(250);
+	}
+	pthread_join(philos[i - 1].thread, NULL);
+}
+
+void	create_p(t_philo *philos, char **arv)
 {
 	int	c;
 	int	i;
 
 	i = -1;
 	c = ft_atoi(arv[1]);
-	(void)threads;
 	while (++i < c)
 	{
-		philos[i].n_philos = i;
+		philos[i].n_philos = c - 1;
 		philos[i].t_die = ft_atoi(arv[2]);
 		philos[i].t_eat = ft_atoi(arv[3]);
 		philos[i].t_sleep = ft_atoi(arv[4]);
 		philos[i].n_forks = 1;
 	}
-	return (-1);
 }
 
 int	main(int arc, char **arv)
 {
-	pthread_t		*threads;
 	t_philo			*philos;
-	pthread_mutex_t	mutex;
 	int				c;
 
 	if (args_protection(arc, arv) == 1)
 		return (1);
-	pthread_mutex_init(&mutex, NULL);
 	c = ft_atoi(arv[1]);
-	threads = malloc(c * sizeof(pthread_t));
-	if (!threads)
-		return (1);
 	philos = malloc(c * sizeof(t_philo));
 	if (!philos)
 		return (1);
 	if (arc == 5)
 	{
-		create_p_t(threads, philos, arv);
-		printf("philos[%d]'s time to die:%d",philos[2].n_philos, philos[2].t_die);
+		create_p(philos, arv);
+		create_th(philos, c);
 	}
 	else if (arc == 6)
 	{

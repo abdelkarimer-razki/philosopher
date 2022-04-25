@@ -12,7 +12,7 @@
 
 NAME = philo
 
-FILES = philosopher.c
+FILES = philosopher.c ./libft/ft_atoi.c
 
 INCLUDE = philosopher.h
 
