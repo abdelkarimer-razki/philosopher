@@ -23,7 +23,7 @@ void	create_th(t_philo *philos, int c)
 		ft_usleep(2000);
 		pthread_create(&philos[i].thread, NULL, &h, philos);
 	}
-	i = 0;
+	/*i = 0;
 	while (1)
 	{
 		if (i == c)
@@ -35,7 +35,7 @@ void	create_th(t_philo *philos, int c)
 			break ;
 		}
 		i++;
-	}
+	}*/
 }
 
 void	create_p(t_philo *philos, char **arv)

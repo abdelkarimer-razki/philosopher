@@ -21,7 +21,7 @@ void	*h(void *j)
 	philos = (t_philo *)j;
 	i++;
 	c = i;
-	//ft_usleep(500 * (philos[c].n_philos - i));
+	//ft_usleep(2000 * (philos[c].n_philos - i));
 	gettimeofday(&philos[c].begin, NULL);
 	philos[c].start = philos[c].begin;
 	while (1)
@@ -37,6 +37,7 @@ int	main(int arc, char **arv)
 {
 	t_philo			*philos;
 	int				c;
+	int				i;
 
 	if (args_protection(arc, arv) == 1)
 		return (1);
@@ -53,6 +54,19 @@ int	main(int arc, char **arv)
 	{
 		create_p(philos, arv);
 		create_th(philos, c);
+		i = 0;
+		while (1)
+		{
+			if (i == c)
+				i = 0;
+			if (gettime(&philos[i].start) > philos[i].t_die / 1000)
+			{
+				printf("%d %d is dead\n", gettime(&philos[i].begin), i + 1);
+				exit(1);
+				//free(philos);
+			}
+			i++;
+		}
 	}
 	else if (arc == 6)
 	{
