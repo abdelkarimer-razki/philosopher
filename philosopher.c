@@ -21,6 +21,19 @@ void	lockprint(t_philo *philos, int c)
 		pthread_mutex_lock(&philos[i].print);
 }
 
+int	philos_eats(t_philo *philos)
+{
+	int	j;
+
+	j = 0;
+	while (j < philos[j].n_philos)
+	{
+		if (philos[j].n_eats == 0)
+			j++;
+	}
+	return (j);
+}
+
 int	deathcheck(t_philo *philos, int c)
 {
 	int	i;
@@ -30,11 +43,14 @@ int	deathcheck(t_philo *philos, int c)
 	{
 		if (i == c)
 			i = 0;
-		if (gettime(&philos[i].start) * 1000 > philos[i].t_die + 5)
+		if (gettime(&philos[i].start) * 1000 > philos[i].t_die + 5
+			&& philos[i].n_eats > 0)
 		{
 			printf("%d %d is dead\n", gettime(&philos[i].begin), i + 1);
 			return (0);
 		}
+		if (philos_eats(philos) == philos[i].n_philos)
+			return (0);
 		i++;
 	}
 }
@@ -56,9 +72,10 @@ void	*h(void *j)
 	c = i;
 	gettimeofday(&philos[c].begin, NULL);
 	philos[c].start = philos[c].begin;
-	while (1)
+	while (1 && philos[c].n_eats)
 	{
 		eating(j, c, &philos[c].start, &philos[c].begin);
+		philos[c].n_eats--;
 		sleeping(philos, &philos[c].begin, c);
 		printf("%d %d is thinking\n", gettime(&philos[c].begin), c + 1);
 	}
