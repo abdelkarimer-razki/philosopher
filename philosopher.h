@@ -25,20 +25,20 @@ typedef struct philosopher
 {
 	int				n_philos;
 	int				t_die;
-	int				n_forks;
 	int				t_eat;
 	pthread_t		thread;
 	int				t_sleep;
 	struct timeval	begin;
 	struct timeval	start;
 	int				n_eats;
+	pthread_mutex_t	print;
 	pthread_mutex_t	mutex;
 }	t_philo;
 int		ft_atoi(const char *str);
-void	sleeping(int *forks, int sleep, struct timeval *start, int c);
+void	sleeping(t_philo	*philos, struct timeval *start1, int c);
 void	ft_usleep(useconds_t time);
 void	create_th(t_philo *philos, int c);
-void	create_p(t_philo *philos, char **arv);
+void	create_p(t_philo *philos, char **arv, int t);
 void	*h(void *j);
 int		ft_isntdigit(char *arv);
 void	eating(void *j, int c, struct timeval *start, struct timeval *start1);
