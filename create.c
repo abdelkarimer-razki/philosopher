@@ -12,7 +12,7 @@
 
 #include "philosopher.h"
 
-void	create_th(t_philo *philos, int c)
+int	create_th(t_philo *philos, int c)
 {
 	int			i;
 	pthread_t	death_checker;
@@ -28,7 +28,7 @@ void	create_th(t_philo *philos, int c)
 		pthread_create(&philos[i].thread, NULL, &h, philos);
 	}
 	pthread_create(&death_checker, NULL, &deathcheck, philos);
-	pthread_join(death_checker, NULL);
+	return ((int)pthread_join(death_checker, NULL));
 }
 
 void	create_p(t_philo *philos, char **arv, int t, int arc)

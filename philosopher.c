@@ -43,13 +43,13 @@ void	*deathcheck(void *j)
 			&& philos[i].n_eats != 0)
 		{
 			printf("%ld %d is dead\n", gettime(&philos[i].begin), i + 1);
-			exit(0);
+			return (0);
 		}
 		ft_usleep(200);
 		if (philos[0].n_arg == 6)
 		{
 			if (philos_eats(philos) == philos[i].n_philos)
-				exit(0);
+				return (0);
 		}
 		i++;
 	}
@@ -98,12 +98,12 @@ int	main(int arc, char **arv)
 	if (arc == 5)
 	{
 		create_p(philos, arv, -1, arc);
-		create_th(philos, c);
+		return (create_th(philos, c));
 	}
 	else if (arc == 6)
 	{
 		create_p(philos, arv, ft_atoi(arv[5]), arc);
-		create_th(philos, c);
+		return (create_th(philos, c));
 	}
 	else
 		return (error());

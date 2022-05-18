@@ -1,26 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   atoi.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aer-razk <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/16 19:03:17 by aer-razk          #+#    #+#             */
-/*   Updated: 2021/11/22 23:16:00 by aer-razk         ###   ########.fr       */
+/*   Created: 2021/11/12 13:03:18 by aer-razk          #+#    #+#             */
+/*   Updated: 2021/11/22 23:14:43 by aer-razk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include"libft.h"
+#include "philosopher.h"
 
-void	*ft_calloc(size_t num, size_t size)
+int	ft_atoi(const char *str)
 {
-	char	*x;
-	int		y;
+	char		*c;
+	size_t		k;
+	size_t		m;
 
-	y = num * size;
-	x = malloc(y);
-	if (!x)
-		return (NULL);
-	while (y--)
-		x[y] = 0;
-	return (x);
+	c = (char *)str;
+	m = 1;
+	k = 0;
+	while (*c == ' ' || *c == '\n'
+		|| *c == '\t' || *c == '\r'
+		|| *c == '\f' || *c == '\v' )
+	{
+		c++;
+	}
+	if (*c == '-' || *c == '+')
+	{
+		if (*c == '-')
+			m = m * -1;
+		c++;
+	}
+	while (*c >= '0' && *c <= '9')
+	{
+		k = (*c - 48) + k * 10;
+		c++;
+	}
+	return ((int)(k * m));
 }

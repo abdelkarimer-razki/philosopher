@@ -38,7 +38,7 @@ typedef struct philosopher
 int			ft_atoi(const char *str);
 void		sleeping(t_philo	*philos, struct timeval *start1, int c);
 void		ft_usleep(useconds_t time);
-void		create_th(t_philo *philos, int c);
+int			create_th(t_philo *philos, int c);
 void		create_p(t_philo *philos, char **arv, int t, int arc);
 void		*h(void *j);
 void		*deathcheck(void *j);
