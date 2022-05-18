@@ -14,7 +14,7 @@
 
 void	sleeping(t_philo	*philos, struct timeval *start1, int c)
 {
-	printf("%d %d is sleeping\n", gettime(start1), c + 1);
+	printf("%ld %d is sleeping\n", gettime(start1), c + 1);
 	ft_usleep(philos[c].t_sleep);
 }
 
@@ -23,11 +23,11 @@ void	ft_usleep(useconds_t time)
 	struct timeval	start;
 
 	gettimeofday(&start, NULL);
-	while ((unsigned int)gettime(&start) < time / 1000)
-		usleep(1);
+	while ((long int)gettime(&start) <= time / 1000)
+		usleep(100);
 }
 
-int	gettime(struct timeval *start1)
+long int	gettime(struct timeval *start1)
 {
 	struct timeval	end;
 

@@ -18,12 +18,12 @@ void	lock_mutex_even(void *j, int c, struct timeval *start1)
 
 	philos = (t_philo *)j;
 	pthread_mutex_lock(&philos[c].mutex);
-	printf("%d %d has taken a fork\n", gettime(start1), c + 1);
+	printf("%ld %d has taken a fork\n", gettime(start1), c + 1);
 	if (c == philos[c].n_philos - 1)
 		pthread_mutex_lock(&philos[0].mutex);
 	else
 		pthread_mutex_lock(&philos[c + 1].mutex);
-	printf("%d %d has taken a fork\n", gettime(start1), c + 1);
+	printf("%ld %d has taken a fork\n", gettime(start1), c + 1);
 }
 
 void	unlock_mutex_even(void *j, int c)
@@ -47,9 +47,9 @@ void	lock_mutex_odd(void *j, int c, struct timeval *start1)
 		pthread_mutex_lock(&philos[0].mutex);
 	else
 		pthread_mutex_lock(&philos[c + 1].mutex);
-	printf("%d %d has taken a fork\n", gettime(start1), c + 1);
+	printf("%ld %d has taken a fork\n", gettime(start1), c + 1);
 	pthread_mutex_lock(&philos[c].mutex);
-	printf("%d %d has taken a fork\n", gettime(start1), c + 1);
+	printf("%ld %d has taken a fork\n", gettime(start1), c + 1);
 }
 
 void	unlock_mutex_odd(void *j, int c)
@@ -74,7 +74,7 @@ void	eating(void *j, int c, struct timeval *start, struct timeval *start1)
 	else
 		lock_mutex_odd(j, c, start1);
 	gettimeofday(start, NULL);
-	printf("%d %d is eating\n", gettime(start1), c + 1);
+	printf("%ld %d is eating\n", gettime(start1), c + 1);
 	ft_usleep(philos[c].t_eat);
 	if ((c + 1) % 2 == 0)
 		unlock_mutex_even(j, c);

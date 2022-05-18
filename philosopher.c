@@ -42,9 +42,10 @@ void	*deathcheck(void *j)
 		if (gettime(&philos[i].start) * 1000 > philos[i].t_die
 			&& philos[i].n_eats != 0)
 		{
-			printf("%d %d is dead\n", gettime(&philos[i].begin), i + 1);
+			printf("%ld %d is dead\n", gettime(&philos[i].begin), i + 1);
 			exit(0);
 		}
+		ft_usleep(200);
 		if (philos[0].n_arg == 6)
 		{
 			if (philos_eats(philos) == philos[i].n_philos)
@@ -76,7 +77,7 @@ void	*h(void *j)
 		eating(j, c, &philos[c].start, &philos[c].begin);
 		philos[c].n_eats--;
 		sleeping(philos, &philos[c].begin, c);
-		printf("%d %d is thinking\n", gettime(&philos[c].begin), c + 1);
+		printf("%ld %d is thinking\n", gettime(&philos[c].begin), c + 1);
 	}
 	return (j);
 }
