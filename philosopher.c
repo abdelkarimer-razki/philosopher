@@ -12,45 +12,44 @@
 
 #include "philosopher.h"
 
-void	lockprint(t_philo *philos, int c)
-{
-	int	i;
-
-	i = -1;
-	while (++i < c)
-		pthread_mutex_lock(&philos[i].print);
-}
-
 int	philos_eats(t_philo *philos)
 {
 	int	j;
+	int	i;
 
 	j = 0;
-	while (j < philos[j].n_philos)
+	i = 0;
+	while (i < philos[0].n_philos)
 	{
 		if (philos[j].n_eats == 0)
 			j++;
+		i++;
 	}
 	return (j);
 }
 
-int	deathcheck(t_philo *philos, int c)
+void	*deathcheck(void *j)
 {
-	int	i;
+	t_philo			*philos;
+	int				i;
 
 	i = 0;
+	philos = (t_philo *)j;
 	while (1)
 	{
-		if (i == c)
+		if (i == philos[0].n_philos)
 			i = 0;
-		if (gettime(&philos[i].start) * 1000 > philos[i].t_die + 5
-			&& philos[i].n_eats > 0)
+		if (gettime(&philos[i].start) * 1000 > philos[i].t_die
+			&& philos[i].n_eats != 0)
 		{
 			printf("%d %d is dead\n", gettime(&philos[i].begin), i + 1);
-			return (0);
+			exit(0);
 		}
-		if (philos_eats(philos) == philos[i].n_philos)
-			return (0);
+		if (philos[0].n_arg == 6)
+		{
+			if (philos_eats(philos) == philos[i].n_philos)
+				exit(0);
+		}
 		i++;
 	}
 }
@@ -72,7 +71,7 @@ void	*h(void *j)
 	c = i;
 	gettimeofday(&philos[c].begin, NULL);
 	philos[c].start = philos[c].begin;
-	while (1 && philos[c].n_eats)
+	while (1 && philos[c].n_eats != 0)
 	{
 		eating(j, c, &philos[c].start, &philos[c].begin);
 		philos[c].n_eats--;
@@ -86,9 +85,6 @@ int	main(int arc, char **arv)
 {
 	t_philo			*philos;
 	int				c;
-	int	i;
-
-	i = 0;
 
 	if (args_protection(arc, arv) == 1)
 		return (error());
@@ -100,15 +96,13 @@ int	main(int arc, char **arv)
 		return (1);
 	if (arc == 5)
 	{
-		create_p(philos, arv, -1);
+		create_p(philos, arv, -1, arc);
 		create_th(philos, c);
-		return (deathcheck(philos, c));
 	}
 	else if (arc == 6)
 	{
-		create_p(philos, arv, ft_atoi(arv[5]));
+		create_p(philos, arv, ft_atoi(arv[5]), arc);
 		create_th(philos, c);
-		return (deathcheck(philos, c));
 	}
 	else
 		return (error());

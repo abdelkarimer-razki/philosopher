@@ -14,7 +14,8 @@
 
 void	create_th(t_philo *philos, int c)
 {
-	int	i;
+	int			i;
+	pthread_t	death_checker;
 
 	i = -1;
 	while (++i < c)
@@ -26,9 +27,11 @@ void	create_th(t_philo *philos, int c)
 			ft_usleep(1000);
 		pthread_create(&philos[i].thread, NULL, &h, philos);
 	}
+	pthread_create(&death_checker, NULL, &deathcheck, philos);
+	pthread_join(death_checker, NULL);
 }
 
-void	create_p(t_philo *philos, char **arv, int t)
+void	create_p(t_philo *philos, char **arv, int t, int arc)
 {
 	int	c;
 	int	i;
@@ -43,4 +46,5 @@ void	create_p(t_philo *philos, char **arv, int t)
 		philos[i].t_sleep = ft_atoi(arv[4]) * 1000;
 		philos[i].n_eats = t;
 	}
+	philos[0].n_arg = arc;
 }
