@@ -74,8 +74,6 @@ after seeing all these benefits we might think that threads are heaven in earth 
 
 ### 4 - **disadvantage:**
 
-### 4 - **disadvantage:**
-
 - Data race:
 
 *while dealing with too many threads we may have a couple of those threads trying to change in the same data location at the same time as threads work parallelly, which cause a datarace.*
